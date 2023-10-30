@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Covaci_Adriana_Lab2.Data;
 using Covaci_Adriana_Lab2.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Covaci_Adriana_Lab2.Pages.Books
 {
@@ -20,12 +21,28 @@ namespace Covaci_Adriana_Lab2.Pages.Books
         }
 
         public IList<Book> Book { get; set; } = default!;
+        public IList<Author> Authors { get; set; } = default!;
+        public SelectListItem AuthorsList { get; set; } = default!;
 
         public async Task OnGetAsync()
         {
             if (_context.Book != null)
             {
-                Book = await _context.Book.Include(b => b.Publisher).ToListAsync();
+                Book = await _context.Book
+                    .Include(b => b.Author)
+                    .Include(b => b.Publisher)
+                    .ToListAsync();
+            }
+
+            if (_context.Author != null)
+            {
+                Authors = await _context.Author.ToListAsync();
+
+                //AuthorsList = Authors.Select(x => new SelectListItem
+                //{
+                //    Text = x.FirstName,
+                //    Value = x.FirstName
+                //}).ToList();
             }
         }
     }
