@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Covaci_Adriana_Lab2.Migrations
 {
     [DbContext(typeof(Covaci_Adriana_Lab2Context))]
-    [Migration("20231027133411_BookCategory")]
-    partial class BookCategory
+    [Migration("20231106162633_Borrowingss")]
+    partial class Borrowingss
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -54,6 +54,9 @@ namespace Covaci_Adriana_Lab2.Migrations
                     b.Property<int?>("AuthorID")
                         .HasColumnType("int");
 
+                    b.Property<int?>("BorrowingID")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(6,2)");
 
@@ -84,7 +87,7 @@ namespace Covaci_Adriana_Lab2.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
 
-                    b.Property<int>("BookId")
+                    b.Property<int>("BookID")
                         .HasColumnType("int");
 
                     b.Property<int>("CategoryID")
@@ -92,11 +95,39 @@ namespace Covaci_Adriana_Lab2.Migrations
 
                     b.HasKey("ID");
 
-                    b.HasIndex("BookId");
+                    b.HasIndex("BookID");
 
                     b.HasIndex("CategoryID");
 
                     b.ToTable("BookCategory");
+                });
+
+            modelBuilder.Entity("Covaci_Adriana_Lab2.Models.Borrowing", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+
+                    b.Property<int?>("BookID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MemberID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ReturnDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("BookID")
+                        .IsUnique()
+                        .HasFilter("[BookID] IS NOT NULL");
+
+                    b.HasIndex("MemberID");
+
+                    b.ToTable("Borrowing");
                 });
 
             modelBuilder.Entity("Covaci_Adriana_Lab2.Models.Category", b =>
@@ -114,6 +145,35 @@ namespace Covaci_Adriana_Lab2.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Category");
+                });
+
+            modelBuilder.Entity("Covaci_Adriana_Lab2.Models.Member", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+
+                    b.Property<string>("Adress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Member");
                 });
 
             modelBuilder.Entity("Covaci_Adriana_Lab2.Models.Publisher", b =>
@@ -136,7 +196,7 @@ namespace Covaci_Adriana_Lab2.Migrations
             modelBuilder.Entity("Covaci_Adriana_Lab2.Models.Book", b =>
                 {
                     b.HasOne("Covaci_Adriana_Lab2.Models.Author", "Author")
-                        .WithMany()
+                        .WithMany("Books")
                         .HasForeignKey("AuthorID");
 
                     b.HasOne("Covaci_Adriana_Lab2.Models.Publisher", "Publisher")
@@ -152,7 +212,7 @@ namespace Covaci_Adriana_Lab2.Migrations
                 {
                     b.HasOne("Covaci_Adriana_Lab2.Models.Book", "Book")
                         .WithMany("BookCategories")
-                        .HasForeignKey("BookId")
+                        .HasForeignKey("BookID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -167,14 +227,41 @@ namespace Covaci_Adriana_Lab2.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("Covaci_Adriana_Lab2.Models.Borrowing", b =>
+                {
+                    b.HasOne("Covaci_Adriana_Lab2.Models.Book", "Book")
+                        .WithOne("Borrowing")
+                        .HasForeignKey("Covaci_Adriana_Lab2.Models.Borrowing", "BookID");
+
+                    b.HasOne("Covaci_Adriana_Lab2.Models.Member", "Member")
+                        .WithMany("Borrowings")
+                        .HasForeignKey("MemberID");
+
+                    b.Navigation("Book");
+
+                    b.Navigation("Member");
+                });
+
+            modelBuilder.Entity("Covaci_Adriana_Lab2.Models.Author", b =>
+                {
+                    b.Navigation("Books");
+                });
+
             modelBuilder.Entity("Covaci_Adriana_Lab2.Models.Book", b =>
                 {
                     b.Navigation("BookCategories");
+
+                    b.Navigation("Borrowing");
                 });
 
             modelBuilder.Entity("Covaci_Adriana_Lab2.Models.Category", b =>
                 {
                     b.Navigation("BookCategories");
+                });
+
+            modelBuilder.Entity("Covaci_Adriana_Lab2.Models.Member", b =>
+                {
+                    b.Navigation("Borrowings");
                 });
 
             modelBuilder.Entity("Covaci_Adriana_Lab2.Models.Publisher", b =>

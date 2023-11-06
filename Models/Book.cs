@@ -25,6 +25,9 @@ namespace Covaci_Adriana_Lab2.Models
 
         public Author? Author { get; set; }
 
+        public int? BorrowingID { get; set; }
+
+        public Borrowing? Borrowing { get; set; }
         public ICollection<BookCategory>? BookCategories { get; set; }
 
     }
