@@ -3,10 +3,6 @@
     "mssql1": {
       "type": "mssql.local",
       "connectionId": "ConnectionStrings:Covaci_Adriana_Lab2Context"
-    },
-    "mssql2": {
-      "type": "mssql.local",
-      "connectionId": "ConnectionStrings:ContextConnection"
     }
   }
 }
