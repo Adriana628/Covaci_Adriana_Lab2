@@ -19,7 +19,7 @@ namespace Covaci_Adriana_Lab2.Pages.Borrowings
         {
             _context = context;
         }
-
+        
         [BindProperty]
         public Borrowing Borrowing { get; set; } = default!;
 
@@ -29,18 +29,27 @@ namespace Covaci_Adriana_Lab2.Pages.Borrowings
             {
                 return NotFound();
             }
-
+            ///aici am pus de pe chatgpt ceva
             var borrowing =  await _context.Borrowing.FirstOrDefaultAsync(m => m.ID == id);
             if (borrowing == null)
             {
                 return NotFound();
             }
             Borrowing = borrowing;
-           ViewData["BookID"] = new SelectList(_context.Book, "ID", "ID");
-           ViewData["MemberID"] = new SelectList(_context.Member, "ID", "ID");
+            var bookList = _context.Book.Include(b => b.Author).Select(x => new
+            {
+                x.ID,
+                BookFullName = x.Title + " - " + x.Author.LastName + " " + x.Author.FirstName
+            });
+            
+            ViewData["BookID"] = new SelectList(bookList, "ID", "BookFullName");
+           ViewData["MemberID"] = new SelectList(_context.Member, "ID", "FullName");
             return Page();
         }
-
+       
+        /// pt nu exista nicaieri book list cauta cu ctrl f 
+      
+    
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
